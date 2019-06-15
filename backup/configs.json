@@ -1,0 +1,12 @@
+{
+	"account_analysis_book" : "往来分析表-201904（胡婷彬）.xls",
+	"non_verification_book" : "201905-CUC_未核销预付款明细表_030619.xls",
+	"payable_book" : "201905-CUC_应付帐款和其他应付帐款报表_030619.xls",
+	
+	"template_sheet" : "模板",
+	"non_verification_sheet" : "201905-CUC_未核销预付款明细表_030619",
+	"payable_sheet" : "201905-CUC_应付帐款和其他应付帐款报表_030619",
+	
+	"MAX_ROW_NUM" : 5000,
+	"MAX_COL_NUM" : 300
+}
