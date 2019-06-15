@@ -288,7 +288,7 @@ def copy_last_account(wb, sht_name, sht_range = None):
     final_stage_col = np.argwhere(arr == col_final_stage)[0, 1]    
     last_row = int(np.argwhere(arr == row_last)[0, 0])
     
-    # 复制I列数据到H列 
+    # 复制I列数据到H列
     fsc = num_to_col(final_stage_col)
     lsc = num_to_col(final_stage_col - 1)
     copy_form_range = "{fsc}{r_start}:{fsc}{r_end}".format(fsc = fsc, r_start = supplier_name_row+2, r_end = last_row)
