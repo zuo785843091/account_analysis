@@ -1,2 +1,10 @@
-2019-06-15 11:13:51,020 comtypes DEBUG    Calling CoUnititialize()
-2019-06-15 11:13:51,020 comtypes DEBUG    CoUnititialize() done.
+2019-08-11 18:29:01,231 comtypes DEBUG    Release <POINTER(IDispatch) ptr=0x1a12c8b6358 at 1a12d94c9c8>
+2019-08-11 18:29:01,262 comtypes DEBUG    Release <POINTER(IDispatch) ptr=0x1a12c8b5c58 at 1a12d94ccc8>
+2019-08-11 18:29:01,278 comtypes DEBUG    Release <POINTER(IDispatch) ptr=0x1a12c8b6208 at 1a12d94cdc8>
+2019-08-11 18:29:01,294 root INFO     =====================开始更新“未核销”=======================
+2019-08-11 18:29:01,372 root INFO     ‘其他应收款-押金保证金-明细余额’，共27条正在更新...
+2019-08-11 18:29:04,091 root INFO     ‘其他应收款-押金保证金-明细余额’更新完毕！ 耗时：2.72秒
+2019-08-11 18:29:04,091 root INFO     ======================开始更新“应付”========================
+2019-08-11 18:29:04,106 root INFO     =======================更新完毕!=======================
+2019-08-11 18:29:04,184 comtypes DEBUG    Calling CoUnititialize()
+2019-08-11 18:29:04,184 comtypes DEBUG    CoUnititialize() done.

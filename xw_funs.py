@@ -190,6 +190,7 @@ def check_payable_table(wb, subject, sht_name = '应付表', sht_range = None):
     
     return dict_suppliers
 
+# 更新往来分析表
 def update_account_analysis_table(wb, sht_name, dict_suppliers, sht_range = None):    
     col_supplier_name = '非关联公司名称'
     col_stage_1 = '0-6个月'
@@ -201,6 +202,8 @@ def update_account_analysis_table(wb, sht_name, dict_suppliers, sht_range = None
     else:
         arr = sht.used_range.options(np.array).value
         check_max_rc(arr, sht_name)
+
+    sht.activate()  # 将当前正在更新的sheet设为活动sheet，可以不要
     supplier_name_col = np.argwhere(arr == col_supplier_name)[0, 1]
     supplier_name_row = np.argwhere(arr == col_supplier_name)[0, 0]    
     stage_1_col = np.argwhere(arr == col_stage_1)[0, 1]
@@ -235,7 +238,10 @@ def update_account_analysis_table(wb, sht_name, dict_suppliers, sht_range = None
             
             sht[i, int(stage_1_col - 1)].value = sum(non_verification_amount)
         
-            del dict_suppliers[supplier]
+            del dict_suppliers[supplier]        
+        else:
+            # 如果供应商不在更新列表，则将末期数据清零
+            sht[i, int(stage_1_col - 1)].value = 0
             
     # 新增供应商
     if len(dict_suppliers) > 0:
@@ -311,10 +317,10 @@ def copy_last_account(wb, sht_name, sht_range = None):
 if __name__ == '__main__':
     excel_configs = configs()    
     
-    col = num_to_col(1000)
+    col = num_to_col(28)
     print(col)
     
-    num = col_to_num('A')
+    num = col_to_num('IK')
     print(num)
     print('end!')
 
