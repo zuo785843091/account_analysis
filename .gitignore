@@ -110,3 +110,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 >>>>>>> refs/remotes/origin/master
+/201905-CUC_应付帐款和其他应付帐款报表_030619.xlsx
+/201905-CUC_未核销预付款明细表_030619.xlsx
+/test.py
+/应付帐款和其他应付帐款报表.xls
+/往来分析表.xls
+/未核销预付款明细表.xls

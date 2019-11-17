@@ -191,11 +191,11 @@ def check_payable_table(wb, subject, sht_name = '应付表', sht_range = None):
     return dict_suppliers
 
 # 更新往来分析表
-def update_account_analysis_table(wb, sht_name, dict_suppliers, sht_range = None):    
+def update_account_analysis_table(wb, sht_name, dict_suppliers, subject, clear_legacy_data = True, sht_range = None):
     col_supplier_name = '非关联公司名称'
     col_stage_1 = '0-6个月'
     row_last = '合计'
-    
+
     sht = wb.sheets[sht_name]
     if sht_range != None:
         arr = sht.range(sht_range).options(np.array).value
@@ -205,67 +205,68 @@ def update_account_analysis_table(wb, sht_name, dict_suppliers, sht_range = None
 
     sht.activate()  # 将当前正在更新的sheet设为活动sheet，可以不要
     supplier_name_col = np.argwhere(arr == col_supplier_name)[0, 1]
-    supplier_name_row = np.argwhere(arr == col_supplier_name)[0, 0]    
+    supplier_name_row = np.argwhere(arr == col_supplier_name)[0, 0]
     stage_1_col = np.argwhere(arr == col_stage_1)[0, 1]
     last_row = int(np.argwhere(arr == row_last)[0, 0])
-    
-    # 清空遗留数据 J* : P*
-    fsc = num_to_col(stage_1_col)
-    lsc = num_to_col(stage_1_col + 6)
-    clear_range = "{fsc}{r_start}:{lsc}{r_end}".format(fsc = fsc, lsc = lsc, r_start = supplier_name_row+2, r_end = last_row)
-    #clear_range = "J{r_start}:P{r_end}".format(r_start = supplier_name_row+2, r_end = last_row)
-    sht.api.Range(clear_range).ClearContents()
-    
+
+    if clear_legacy_data:
+        # 清空遗留数据 I* : P*
+        fsc = num_to_col(stage_1_col-1)
+        lsc = num_to_col(stage_1_col + 6)
+        clear_range = "{fsc}{r_start}:{lsc}{r_end}".format(fsc = fsc, lsc = lsc, r_start = supplier_name_row+2, r_end = last_row)
+        # clear_range = "J{r_start}:P{r_end}".format(r_start = supplier_name_row+2, r_end = last_row)
+        sht.api.Range(clear_range).ClearContents()
+
     # 更新已有的供应商
     for i in range(supplier_name_row + 1, last_row):
         supplier = str(arr[i, supplier_name_col]).strip()
         values = dict_suppliers.get(supplier)
-        
-        if values:
+
+        if values and str(arr[i, supplier_name_col-2]).strip() == subject:
             non_verification_amount = []
             stage = []
             for v in values:
                 aging_days = v[1]
                 non_verification_amount.append(v[0])
-                stage.append(cal_stage(aging_days))            
-            
+                stage.append(cal_stage(aging_days))
+
             for s in set(stage):
                 nva = 0
                 for j in range(len(stage)):
                     if s == stage[j]:
                         nva += non_verification_amount[j]
                 sht[i, int(stage_1_col + s)].value = nva
-            
+
             sht[i, int(stage_1_col - 1)].value = sum(non_verification_amount)
-        
-            del dict_suppliers[supplier]        
+
+            del dict_suppliers[supplier]
         else:
-            # 如果供应商不在更新列表，则将末期数据清零
-            sht[i, int(stage_1_col - 1)].value = 0
-            
+            # sht[i, int(stage_1_col - 1)].value = 0
+            continue
+
     # 新增供应商
     if len(dict_suppliers) > 0:
-        for supplier in dict_suppliers: 
+        for supplier in dict_suppliers:
             values = dict_suppliers.get(supplier)
             non_verification_amount = []
-            stage = []            
-                       
+            stage = []
+
             insert_row = last_row
             sht.api.Rows(insert_row + 1).Insert()
             sht[insert_row, int(stage_1_col)].value = np.array([None] * 7)
-            
+
             sht[insert_row, 0].value = arr[supplier_name_row + 1, 0]
-            sht[insert_row, 1].value = arr[supplier_name_row + 1, 1]
-            sht[insert_row, 5].value = arr[supplier_name_row + 1, 5]            
+            sht[insert_row, 1].value = subject
+            sht[insert_row, 5].value = arr[supplier_name_row + 1, 5]
             sht[insert_row, int(supplier_name_col)].value = supplier
             sht[insert_row, int(supplier_name_col + 1)].value = values[0][2]
-            
+
 
             for v in values:
                 aging_days = v[1]
                 non_verification_amount.append(v[0])
                 stage.append(cal_stage(aging_days))
-            
+
             for s in set(stage):
                 nva = 0
                 for j in range(len(stage)):
@@ -273,7 +274,7 @@ def update_account_analysis_table(wb, sht_name, dict_suppliers, sht_range = None
                         nva += non_verification_amount[j]
                 sht[insert_row, int(stage_1_col + s)].value = nva
             sht[insert_row, int(stage_1_col - 1)].value = sum(non_verification_amount)
-        
+
             last_row += 1
             logging.info('    新增：' + supplier)
 
